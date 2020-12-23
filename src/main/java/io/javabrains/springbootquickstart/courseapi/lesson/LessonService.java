@@ -16,7 +16,7 @@ public class LessonService {
         return lessonRepository.findByCourseId(courseId);
     }
 
-    public Optional<Lesson> findLesson(String topicId, String courseId, String lessonId) {
+    public Optional<Lesson> findLesson(String courseId, String lessonId) {
         return lessonRepository.findById(lessonId);
     }
 

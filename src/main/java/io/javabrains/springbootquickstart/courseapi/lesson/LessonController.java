@@ -3,9 +3,15 @@ package io.javabrains.springbootquickstart.courseapi.lesson;
 import io.javabrains.springbootquickstart.courseapi.course.Course;
 import io.javabrains.springbootquickstart.courseapi.topic.Topic;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 public class LessonController {
@@ -13,17 +19,27 @@ public class LessonController {
     @Autowired
     private LessonService lessonService;
 
+    @Autowired
+    private LessonAssembler lessonAssembler;
+
     @RequestMapping("/topics/{topicId}/courses/{courseId}/lessons")
-    public List<Lesson> getAllLessons(@PathVariable String topicId,
-                                     @PathVariable String courseId) {
-        return lessonService.getAllLessons(courseId);
+    public HttpEntity<List<LessonResource>> getAllLessons(
+            @PathVariable String topicId,
+            @PathVariable String courseId) {
+        List<Lesson> allLessons = lessonService.getAllLessons(courseId);
+        List<LessonResource> lessonResources = lessonAssembler.toResource(allLessons);
+        lessonResources.forEach(resource -> resource
+                .add(linkTo(methodOn(LessonController.class)
+                        .findLesson(topicId, resource.getCourseId(), resource.getId()))
+                        .withSelfRel()));
+        return new ResponseEntity<>(lessonResources, HttpStatus.OK);
     }
 
     @RequestMapping("/topics/{topicId}/courses/{courseId}/lessons/{lessonId}")
     public Lesson findLesson(@PathVariable String topicId,
-                            @PathVariable String courseId,
-                            @PathVariable String lessonId) {
-        return lessonService.findLesson(topicId, courseId, lessonId).orElse(null);
+                             @PathVariable String courseId,
+                             @PathVariable String lessonId) {
+        return lessonService.findLesson(courseId, lessonId).orElse(null);
     }
 
     @RequestMapping(method = RequestMethod.POST,
