@@ -1,24 +1,21 @@
 databaseChangeLog:
   - changeSet:
-      id: 1466006862728-4
-      author: preed (generated)
+      id: topics-create
+      author: topic guy
       changes:
         - createTable:
             columns:
               - column:
-                  autoIncrement: true
+                  autoIncrement: false
                   constraints:
                     primaryKey: true
-                    primaryKeyName: account_pkey
+                    primaryKeyName: topic_id
                   name: id
-                  type: bigint
+                  type: VARCHAR(100)
               - column:
-                  name: email
+                  name: name
                   type: VARCHAR(255)
               - column:
-                  name: password
+                  name: description
                   type: VARCHAR(255)
-              - column:
-                  name: role
-                  type: VARCHAR(255)
-            tableName: preed
+            tableName: topic
