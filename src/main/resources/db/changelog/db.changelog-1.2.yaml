@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: courses-add-topic_id
+      author: courses guy
+      changes:
+        - alterTable:
+            columns:
+              - column:
+                  constraints:
+                    foreignKey: true
+                    foreignKeyName: topic_id
+                  name: topic_id
+                  type: VARCHAR(100)
+            tableName: course

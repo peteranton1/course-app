@@ -11,12 +11,6 @@ public class TopicService {
 
     @Autowired
     private TopicRepository topicRepository;
-//    private List<Topic> topics = new ArrayList<>(Arrays.asList(
-//                Topic.builder().id("spring").name("Spring Framework")
-//                        .description("Spring Framework Desc").build()
-//                ,Topic.builder().id("java").name("Java Core")
-//                        .description("Java Core Desc").build()
-//        ));
 
     public List<Topic> getAllTopics() {
         return topicRepository.findAll();

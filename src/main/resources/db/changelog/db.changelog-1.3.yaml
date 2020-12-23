@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: lessons-create
+      author: courses guy
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: lesson_id
+                  name: id
+                  type: VARCHAR(100)
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    foreignKey: true
+                    foreignKeyName: course_id
+                  name: course_id
+                  type: VARCHAR(100)
+            tableName: lesson

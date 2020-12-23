@@ -1,7 +1,7 @@
 # Read Me First
 The following was discovered as part of building this project:
 
-* The original package name 'io.javabrains.springbootquickstart.course-api' is invalid and this project uses 'io.javabrains.springbootquickstart.courseapi' instead.
+* The original package name 'io.javabrains.springbootquickstart.lesson-api' is invalid and this project uses 'io.javabrains.springbootquickstart.courseapi' instead.
 
 # Getting Started
 
