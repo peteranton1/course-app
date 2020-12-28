@@ -1,11 +1,8 @@
-package io.javabrains.springbootquickstart.courseapi.lesson;
+package io.javabrains.springbootquickstart.courseapi.resource;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
 @Builder
@@ -14,6 +11,7 @@ import org.springframework.hateoas.RepresentationModel;
 @ToString
 public class LessonResource extends RepresentationModel<LessonResource> {
     String id;
+    @Setter
     String courseId;
     String name;
     String description;

@@ -1,4 +1,4 @@
-package io.javabrains.springbootquickstart.courseapi.topic;
+package io.javabrains.springbootquickstart.courseapi.resource;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +10,7 @@ import org.springframework.hateoas.RepresentationModel;
 @EqualsAndHashCode(callSuper = false)
 @ToString
 public class TopicResource extends RepresentationModel<TopicResource> {
+    @Setter
     String id;
     String name;
     String description;

@@ -1,7 +1,6 @@
-package io.javabrains.springbootquickstart.courseapi.lesson;
+package io.javabrains.springbootquickstart.courseapi.model;
 
-import io.javabrains.springbootquickstart.courseapi.course.Course;
-import io.javabrains.springbootquickstart.courseapi.topic.Topic;
+import io.javabrains.springbootquickstart.courseapi.model.Topic;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,12 +15,12 @@ import javax.persistence.ManyToOne;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Lesson {
+public class Course {
     @Id
     private String id;
     private String name;
     private String description;
 
     @ManyToOne
-    private Course course;
+    private Topic topic;
 }
