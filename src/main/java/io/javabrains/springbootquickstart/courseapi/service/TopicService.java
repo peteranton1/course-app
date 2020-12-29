@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
+
 @Service
 public class TopicService {
 
@@ -24,23 +27,29 @@ public class TopicService {
         return topicAssembler.toResource(allTopics);
     }
 
-    public Optional<TopicResource> findTopicResource(String id) {
-        return topicRepository.findById(id)
+    public Optional<TopicResource> findTopicResource(String topicId) {
+        requireNonNull(topicId);
+        return topicRepository.findById(topicId)
                 .map(topic -> topicAssembler.toResource(topic));
     }
 
-    public void addTopicResource(TopicResource topicResource) {
+    public TopicResource updateTopicResource(TopicResource topicResource) {
+        requireNonNull(topicResource);
+        requireNonNull(topicResource.getId());
         Topic topic = topicAssembler.toModel(topicResource);
-        topicRepository.save(topic);
+        Topic topicUpdated = topicRepository.save(topic);
+        return topicAssembler.toResource(topicUpdated);
     }
 
-    public void updateTopicResource(TopicResource topicResource) {
-        Topic topic = topicAssembler.toModel(topicResource);
-        topicRepository.save(topic);
-    }
-
-    public void deleteTopicById(String id) {
-        Topic topic = topicRepository.getOne(id);
-        topicRepository.delete(topic);
+    public TopicResource deleteTopicById(String topicId) {
+        requireNonNull(topicId);
+        Topic topic = topicRepository
+                .findById(topicId)
+                .orElse(null);
+        if (nonNull(topic)) {
+            topicRepository.delete(topic);
+            return topicAssembler.toResource(topic);
+        }
+        return null;
     }
 }

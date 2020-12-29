@@ -11,7 +11,7 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - /home/webuser/dev/proj-spring/course-app/mariadb/data:/var/lib/mysql
+      - /d/dev/proj-spring/course-app/mariadb/data:/var/lib/mysql
 
   adminer:
     image: adminer

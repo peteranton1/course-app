@@ -4,9 +4,10 @@ import io.javabrains.springbootquickstart.courseapi.model.Topic;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static java.util.Objects.requireNonNull;
+import static java.util.Objects.*;
 
 @Component
 public class TopicAssembler {

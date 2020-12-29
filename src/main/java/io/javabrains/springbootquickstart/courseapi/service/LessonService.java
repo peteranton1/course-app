@@ -1,5 +1,6 @@
 package io.javabrains.springbootquickstart.courseapi.service;
 
+import io.javabrains.springbootquickstart.courseapi.model.Course;
 import io.javabrains.springbootquickstart.courseapi.model.LessonRepository;
 import io.javabrains.springbootquickstart.courseapi.model.Lesson;
 import io.javabrains.springbootquickstart.courseapi.resource.LessonAssembler;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
+
 @Service
 public class LessonService {
 
@@ -19,28 +23,38 @@ public class LessonService {
     @Autowired
     private LessonAssembler lessonAssembler;
 
-    public List<LessonResource> getAllLessonResources(String courseId) {
+    public List<LessonResource> getAllLessonResources(String topicId, String courseId) {
+        requireNonNull(topicId);
+        requireNonNull(courseId);
         List<Lesson> allLessons = lessonRepository.findByCourseId(courseId);
         return lessonAssembler.toResource(allLessons);
     }
 
     public Optional<LessonResource> findLessonResource(String courseId, String lessonId) {
+        requireNonNull(courseId);
+        requireNonNull(lessonId);
         return lessonRepository.findById(lessonId)
                 .map(lesson -> lessonAssembler.toResource(lesson));
     }
 
-    public void addLessonResource(LessonResource lessonResource) {
+    public LessonResource updateLessonResource(LessonResource lessonResource) {
+        requireNonNull(lessonResource);
+        requireNonNull(lessonResource.getId());
+        requireNonNull(lessonResource.getCourseId());
         Lesson lesson = lessonAssembler.toModel(lessonResource);
-        lessonRepository.save(lesson);
+        Lesson lessonUpdated = lessonRepository.save(lesson);
+        return lessonAssembler.toResource(lessonUpdated);
     }
 
-    public void updateLessonResource(LessonResource lessonResource) {
-        Lesson lesson = lessonAssembler.toModel(lessonResource);
-        lessonRepository.save(lesson);
-    }
-
-    public void deleteLessonById(String lessonId) {
-        lessonRepository.findById(lessonId)
-                .ifPresent(c -> lessonRepository.delete(c));
+    public LessonResource deleteLessonById(String lessonId) {
+        requireNonNull(lessonId);
+        Lesson lesson = lessonRepository
+                .findById(lessonId)
+                .orElse(null);
+        if (nonNull(lesson)) {
+            lessonRepository.delete(lesson);
+            return lessonAssembler.toResource(lesson);
+        }
+        return null;
     }
 }

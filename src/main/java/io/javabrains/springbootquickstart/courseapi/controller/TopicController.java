@@ -20,7 +20,7 @@ public class TopicController {
     @Autowired
     private TopicService topicService;
 
-    @RequestMapping("/topics")
+    @RequestMapping(method = RequestMethod.GET, value = "/topics")
     public HttpEntity<List<TopicResource>> getAllTopicResources() {
         List<TopicResource> allTopicResources = topicService.getAllTopicResources();
         allTopicResources.forEach(resource -> resource
@@ -30,7 +30,7 @@ public class TopicController {
         return new ResponseEntity<>(allTopicResources, HttpStatus.OK);
     }
 
-    @RequestMapping("/topics/{topicId}")
+    @RequestMapping(method = RequestMethod.GET, value = "/topics/{topicId}")
     public HttpEntity<TopicResource> findTopicResource(@PathVariable String topicId) {
         return new ResponseEntity<>(topicService.findTopicResource(topicId)
                 .map(resource -> resource
@@ -40,20 +40,22 @@ public class TopicController {
                 .orElse(null), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/topics")
-    public void addTopicResource(@RequestBody TopicResource topicResource) {
-        topicService.addTopicResource(topicResource);
-    }
-
-    @RequestMapping(method = RequestMethod.PUT, value = "/topics/{id}")
-    public void updateTopicResource(@PathVariable String topicId,
-                                    @RequestBody TopicResource topicResource) {
+    @RequestMapping(method = RequestMethod.POST, value = "/topics/{topicId}")
+    public HttpEntity<TopicResource> addTopicResource(@PathVariable String topicId,
+                                                      @RequestBody TopicResource topicResource) {
         topicResource.setId(topicId);
-        topicService.updateTopicResource(topicResource);
+        return new ResponseEntity<>(topicService.updateTopicResource(topicResource), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/topics/{id}")
-    public void deleteTopicById(@PathVariable String id) {
-        topicService.deleteTopicById(id);
+    @RequestMapping(method = RequestMethod.PUT, value = "/topics/{topicId}")
+    public HttpEntity<TopicResource> updateTopicResource(@PathVariable String topicId,
+                                                         @RequestBody TopicResource topicResource) {
+        topicResource.setId(topicId);
+        return new ResponseEntity<>(topicService.updateTopicResource(topicResource), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, value = "/topics/{topicId}")
+    public HttpEntity<TopicResource> deleteTopicById(@PathVariable String topicId) {
+        return new ResponseEntity<>(topicService.deleteTopicById(topicId), HttpStatus.OK);
     }
 }

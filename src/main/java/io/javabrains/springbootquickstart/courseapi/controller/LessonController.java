@@ -24,11 +24,13 @@ public class LessonController {
     @Autowired
     private LessonAssembler lessonAssembler;
 
-    @RequestMapping("/topics/{topicId}/courses/{courseId}/lessons")
+    @RequestMapping(method = RequestMethod.GET,
+            value = "/topics/{topicId}/courses/{courseId}/lessons")
     public HttpEntity<List<LessonResource>> getAllLessonResources(
             @PathVariable String topicId,
             @PathVariable String courseId) {
-        List<LessonResource> allLessonResources = lessonService.getAllLessonResources(courseId);
+        List<LessonResource> allLessonResources = lessonService
+                .getAllLessonResources(topicId, courseId);
         allLessonResources.forEach(resource -> resource
                 .add(linkTo(methodOn(LessonController.class)
                         .findLessonResource(resource.getCourseId(), resource.getId()))
@@ -36,7 +38,8 @@ public class LessonController {
         return new ResponseEntity<>(allLessonResources, HttpStatus.OK);
     }
 
-    @RequestMapping("/topics/{topicId}/courses/{courseId}/lessons/{lessonId}")
+    @RequestMapping(method = RequestMethod.GET,
+            value = "/topics/{topicId}/courses/{courseId}/lessons/{lessonId}")
     public LessonResource findLessonResource(@PathVariable String courseId,
                                              @PathVariable String lessonId) {
         return lessonService.findLessonResource(courseId, lessonId)
@@ -48,28 +51,28 @@ public class LessonController {
     }
 
     @RequestMapping(method = RequestMethod.POST,
-            value = "/topics/{topicId}/courses/{courseId}/lessons")
-    public void addLessonResource(@PathVariable String topicId,
-                                  @PathVariable String courseId,
+            value = "/topics/{topicId}/courses/{courseId}/lessons/{lessonId}")
+    public void addLessonResource(@PathVariable String courseId,
+                                  @PathVariable String lessonId,
                                   @RequestBody LessonResource lessonResource) {
+        lessonResource.setId(lessonId);
         lessonResource.setCourseId(courseId);
-        lessonService.addLessonResource(lessonResource);
+        lessonService.updateLessonResource(lessonResource);
     }
 
     @RequestMapping(method = RequestMethod.PUT,
-            value = "/topics/{topicId}/courses/{courseId}/lessons")
-    public void updateLessonResource(@PathVariable String topicId,
-                                     @PathVariable String courseId,
+            value = "/topics/{topicId}/courses/{courseId}/lessons/{lessonId}")
+    public void updateLessonResource(@PathVariable String courseId,
+                                     @PathVariable String lessonId,
                                      @RequestBody LessonResource lessonResource) {
+        lessonResource.setId(lessonId);
         lessonResource.setCourseId(courseId);
         lessonService.updateLessonResource(lessonResource);
     }
 
     @RequestMapping(method = RequestMethod.DELETE,
             value = "/topics/{topicId}/courses/{courseId}/lessons/{lessonId}")
-    public void deleteLessonResource(@PathVariable String topicId,
-                                     @PathVariable String courseId,
-                                     @PathVariable String lessonId) {
+    public void deleteLessonResource(@PathVariable String lessonId) {
         lessonService.deleteLessonById(lessonId);
     }
 }

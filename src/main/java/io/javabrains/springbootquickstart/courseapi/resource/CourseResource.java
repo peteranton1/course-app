@@ -10,6 +10,7 @@ import org.springframework.hateoas.RepresentationModel;
 @EqualsAndHashCode(callSuper = false)
 @ToString
 public class CourseResource extends RepresentationModel<CourseResource> {
+    @Setter
     String id;
     @Setter
     String topicId;
