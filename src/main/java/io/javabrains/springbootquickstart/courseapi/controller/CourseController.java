@@ -55,7 +55,11 @@ public class CourseController {
         courseResource.setId(courseId);
         courseResource.setTopicId(topicId);
         CourseResource updatedResource = courseService.updateCourseResource(courseResource);
-        return new ResponseEntity<>(updatedResource, HttpStatus.OK);
+        if(nonNull(updatedResource)) {
+            return new ResponseEntity<>(updatedResource, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @RequestMapping(method = RequestMethod.PUT,

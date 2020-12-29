@@ -1,5 +1,6 @@
 package io.javabrains.springbootquickstart.courseapi.controller;
 
+import io.javabrains.springbootquickstart.courseapi.resource.CourseResource;
 import io.javabrains.springbootquickstart.courseapi.resource.LessonAssembler;
 import io.javabrains.springbootquickstart.courseapi.resource.LessonResource;
 import io.javabrains.springbootquickstart.courseapi.service.LessonService;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static java.util.Objects.nonNull;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -52,27 +54,37 @@ public class LessonController {
 
     @RequestMapping(method = RequestMethod.POST,
             value = "/topics/{topicId}/courses/{courseId}/lessons/{lessonId}")
-    public void addLessonResource(@PathVariable String courseId,
-                                  @PathVariable String lessonId,
-                                  @RequestBody LessonResource lessonResource) {
+    public HttpEntity<LessonResource> addLessonResource(@PathVariable String courseId,
+                                                         @PathVariable String lessonId,
+                                                         @RequestBody LessonResource lessonResource) {
         lessonResource.setId(lessonId);
         lessonResource.setCourseId(courseId);
-        lessonService.updateLessonResource(lessonResource);
+        LessonResource updatedResource = lessonService.updateLessonResource(lessonResource);
+        if(nonNull(updatedResource)) {
+            return new ResponseEntity<>(updatedResource, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @RequestMapping(method = RequestMethod.PUT,
             value = "/topics/{topicId}/courses/{courseId}/lessons/{lessonId}")
-    public void updateLessonResource(@PathVariable String courseId,
+    public HttpEntity<LessonResource> updateLessonResource(@PathVariable String courseId,
                                      @PathVariable String lessonId,
                                      @RequestBody LessonResource lessonResource) {
         lessonResource.setId(lessonId);
         lessonResource.setCourseId(courseId);
-        lessonService.updateLessonResource(lessonResource);
+        LessonResource updatedResource = lessonService.updateLessonResource(lessonResource);
+        if(nonNull(updatedResource)) {
+            return new ResponseEntity<>(updatedResource, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @RequestMapping(method = RequestMethod.DELETE,
             value = "/topics/{topicId}/courses/{courseId}/lessons/{lessonId}")
-    public void deleteLessonResource(@PathVariable String lessonId) {
-        lessonService.deleteLessonById(lessonId);
+    public HttpEntity<LessonResource> deleteLessonResource(@PathVariable String lessonId) {
+        return new ResponseEntity<>(lessonService.deleteLessonById(lessonId), HttpStatus.OK);
     }
 }
