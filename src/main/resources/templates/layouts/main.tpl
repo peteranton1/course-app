@@ -2,6 +2,7 @@ yieldUnescaped '<!DOCTYPE html>'
 html {
     head {
         title(pageTitle)
+        meta('http-equiv':'"Content-Type" content="text/html; charset=utf-8"')
         link(rel: 'stylesheet', href: '/css/bootstrap.min.css')
     }
     body {
@@ -9,11 +10,13 @@ html {
             div(class: 'navbar') {
                 div(class: 'navbar-inner') {
                     a(class: 'brand',
-                            href: 'http://beta.groovy-lang.org/docs/groovy-2.3.2/html/documentation/markup-template-engine.html',
-                            'Groovy - Template Engine docs')
+                            href: '/') {
+                        yield 'Topics, Courses and Lessons '
+                    }
+                    var href = breadcrumbs?.join("/")
                     a(class: 'brand',
-                            href: 'hhttp://projects.spring.io/spring-boot/') {
-                        yield 'Spring Boot docs'
+                        href: "$href") {
+                        yield "$href"
                     }
                 }
             }
