@@ -1,11 +1,11 @@
 yieldUnescaped '<!DOCTYPE html>'
 html {
     head {
-        title(pageTitle)
+        title("$pageTitle $breadcrumbs")
         meta('http-equiv':'"Content-Type" content="text/html; charset=utf-8"')
         link(rel: 'stylesheet', href: '/css/bootstrap.min.css')
     }
-    body {
+    body(class: 'body') {
         div(class: 'container') {
             div(class: 'navbar') {
                 div(class: 'navbar-inner') {
@@ -20,7 +20,27 @@ html {
                     }
                 }
             }
-            mainBody()
+            table(class: 'table') {
+                tr {
+                    td {
+                        yield message ?: ''
+                    }
+                }
+            }
+            table(class: 'table') {
+                tr {
+                    td {
+                        mainBody()
+                    }
+                }
+            }
+            table(class: 'table') {
+                tr {
+                    td {
+                        yield ''
+                    }
+                }
+            }
         }
     }
 }

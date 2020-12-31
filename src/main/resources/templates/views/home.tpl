@@ -1,6 +1,7 @@
 layout 'layouts/main.tpl',
-        breadcrumbs:  breadcrumbs,
-        pageTitle: 'Spring Boot - Groovy templates example with layout',
+        pageTitle: 'Topics, Courses, Lessons - ',
+        breadcrumbs:  breadcrumbs ?: '',
+        message: message ?: '',
         mainBody: contents {
             div(class: article){
                 div("Maintain the lists of topics, courses and lessons.")

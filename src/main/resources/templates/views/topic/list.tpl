@@ -1,6 +1,7 @@
 layout 'layouts/main.tpl',
-        breadcrumbs:  breadcrumbs,
-        pageTitle: 'List Topics',
+        pageTitle: 'Topics, Courses, Lessons - ',
+        breadcrumbs:  breadcrumbs ?: '',
+        message: message ?: '',
         mainBody: contents {
             ul {
                 topics.each { topic ->

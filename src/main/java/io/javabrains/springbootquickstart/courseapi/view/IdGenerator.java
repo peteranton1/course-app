@@ -8,7 +8,7 @@ import java.util.Random;
 @Component
 public class IdGenerator {
 
-    private static final String GEN_CHARS = "0123456789" +
+    public static final String GEN_CHARS = "0123456789" +
             "abcdefghijklmnopqrstuvwxyz";
     private Random random;
 

@@ -1,10 +1,11 @@
 layout 'layouts/main.tpl',
-        breadcrumbs:  breadcrumbs,
-        pageTitle: 'Edit Topic',
+        pageTitle: 'Topics, Courses, Lessons - ',
+        breadcrumbs:  breadcrumbs ?: '',
+        message: message ?: '',
         mainBody: contents {
-            boolean exists = topic.id && !"add".equals(topic.id)
+            boolean exists = topic?.id && !"add".equals(topic?.id)
             div(class: article){
-                form (id:'editForm', action: breadcrumbs.join("/"), method:'post') {
+                form (id:'editForm', action: breadcrumbs.join("/")+"/update", method:'post') {
                     if(exists){
                         input(name: 'id', type: 'hidden', value: topic.id ?: '')
                     } else {
@@ -26,6 +27,12 @@ layout 'layouts/main.tpl',
                     a(class: 'brand',
                             href: "/topic/$topic.id/course") {
                         yield "See Courses for Topic $topic.id"
+                    }
+                    div("&nbsp;")
+                    div("Remove Topic $topic.name: $topic.description (only if all courses removed first)")
+                    a(class: 'brand',
+                            href: "/topic/$topic.id/delete") {
+                        yield "Delete Topic $topic.name: $topic.description"
                     }
                 }
             }

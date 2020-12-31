@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Objects.isNull;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class ViewService {
@@ -23,11 +23,20 @@ public class ViewService {
     @Autowired
     IdGenerator idGenerator;
 
-    public ViewData viewData(ViewName viewName) {
+    public ViewData listHome(ViewName viewName) {
         return ViewData.builder()
                 .urlPath(viewName.getUrlPath())
                 .viewName(viewName.getTemplatePath())
-                .model(getData(viewName))
+                .model(homeList(viewName))
+                .build();
+    }
+
+    public ViewData listTopic(String message) {
+        final ViewName viewName = ViewName.TOPIC;
+        return ViewData.builder()
+                .urlPath(viewName.getUrlPath())
+                .viewName(viewName.getTemplatePath())
+                .model(topicList(viewName, message))
                 .build();
     }
 
@@ -41,15 +50,11 @@ public class ViewService {
     }
 
     public TopicResource saveTopic(TopicResource topic) {
-        TopicResource topicResource = topicService.updateTopicResource(topic);
-        return topicResource;
+        return topicService.updateTopicResource(topic);
     }
 
-    private Map<String, Object> getData(ViewName viewName) {
-        if (viewName == ViewName.TOPIC) {
-            return topicList(viewName);
-        }
-        return homeList(viewName);
+    public TopicResource deleteTopic(String topicId) {
+        return topicService.deleteTopicById(topicId);
     }
 
     private Map<String, Object> homeList(ViewName viewName) {
@@ -58,13 +63,21 @@ public class ViewService {
         );
     }
 
-    private Map<String, Object> topicList(ViewName viewName) {
-        List<TopicResource> allTopicResources = topicService.getAllTopicResources();
-
-        return ImmutableMap.of(
-                "breadcrumbs", viewName.getUrlPath(),
-                "topics", allTopicResources
-        );
+    private Map<String, Object> topicList(ViewName viewName, String message) {
+        try {
+            List<TopicResource> allTopicResources = topicService.getAllTopicResources();
+            return ImmutableMap.of(
+                    "breadcrumbs", viewName.getUrlPath(),
+                    "topics", allTopicResources,
+                    "message", Optional.ofNullable(message).orElse("")
+            );
+        } catch(Exception e){
+            return ImmutableMap.of(
+                    "breadcrumbs", viewName.getUrlPath(),
+                    "topics", ImmutableList.of(),
+                    "message", Optional.ofNullable(message).orElse("Unknown Error")
+            );
+        }
     }
 
     private Map<String, Object> topicEdit(ViewName viewName, String topicId) {
