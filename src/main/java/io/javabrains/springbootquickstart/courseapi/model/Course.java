@@ -1,6 +1,5 @@
 package io.javabrains.springbootquickstart.courseapi.model;
 
-import io.javabrains.springbootquickstart.courseapi.model.Topic;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

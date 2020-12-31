@@ -1,15 +1,39 @@
 layout 'layouts/main.tpl',
-        breadcrumbs:  breadcrumbs,
-        pageTitle: 'Edit Topic',
+        pageTitle: 'Topics, Courses, Lessons - ',
+        breadcrumbs:  breadcrumbs ?: '',
+        message: message ?: '',
         mainBody: contents {
-            form (id:'editForm', action: breadcrumbs.join("/"), method:'post') {
-                input(name: 'id', type: 'hidden', value: topic.id ?: '')
-                label(for: 'Name', 'Name')
-                input(name: 'name', type: 'text', value: topic.name ?: '')
-                label(for: 'Description', 'Description')
-                input(name: 'description', type: 'text', value: topic.description ?: '')
-                div(class: 'form-actions') {
-                    input(type: 'submit', value: 'Submit')
+            boolean exists = course?.id && !"add".equals(course?.id)
+            div(class: article){
+                form (id:'editForm', action: breadcrumbs.join("/")+"/update", method:'post') {
+                    if(exists){
+                        input(name: 'id', type: 'hidden', value: course.id ?: '')
+                    } else {
+                        label(for: 'Id', 'Id')
+                        input(name: 'id', type: 'text', value: newId)
+                    }
+                    label(for: 'Name', 'Name')
+                    input(name: 'name', type: 'text', value: course.name ?: newId)
+                    label(for: 'Description', 'Description')
+                    input(name: 'description', type: 'text', value: course.description ?: newId)
+                    div(class: 'form-actions') {
+                        input(type: 'submit', value: 'Submit')
+                    }
+                }
+            }
+            div(class: article){
+                if(exists){
+                    div("Maintain the lists of lessons.")
+                    a(class: 'brand',
+                            href: "/topic/$topicId/course/$course.id/lesson") {
+                        yield "See Lessons for Course $course.id"
+                    }
+                    div("&nbsp;")
+                    div("Remove Course $course.name: $course.description (only if all lessons removed first)")
+                    a(class: 'brand',
+                            href: "/topic/$topicId/course/$course.id/delete") {
+                        yield "Delete Topic $course.name: $course.description"
+                    }
                 }
             }
         }

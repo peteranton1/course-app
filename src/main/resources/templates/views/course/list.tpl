@@ -1,16 +1,17 @@
 layout 'layouts/main.tpl',
         breadcrumbs:  breadcrumbs,
-        pageTitle: 'List Topics',
+        pageTitle: 'List Courses',
+        topicId: topicId,
         mainBody: contents {
             ul {
-                topics.each { topic ->
+                courses.each { course ->
                     li {
-                        a(href:"/topic/$topic.id", "$topic.name : $topic.description")
+                        a(href:"/topic/$topicId/course/$course.id", "$course.name : $course.description")
                     }
                 }
             }
 
             div {
-                a(href:'/topic/add', 'Add new topic')
+                a(href:"/topic/$topicId/course/add", 'Add new course')
             }
         }

@@ -2,12 +2,17 @@ package io.javabrains.springbootquickstart.courseapi.view;
 
 import com.google.common.escape.Escaper;
 import io.javabrains.springbootquickstart.courseapi.resource.TopicResource;
+import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+@Component
 public class FieldValidator {
+
     private final Escaper escaper = MessageEscaper.escaper;
 
     private static final int MIN_WIDTH = 1;
@@ -41,22 +46,23 @@ public class FieldValidator {
     }
 
     public String ensureValidId(String value, int minWidth, int maxWidth) {
-        String temp = sanitiseId("T", value);
+        String temp = sanitiseId(value);
         if(!value.equals(temp)){
             return "illegal characters in Id";
         }
         return ensureValid(temp, minWidth, maxWidth);
     }
 
-    public String sanitiseId(String prefix, String value) {
+    public String sanitiseId(String value) {
         final String validChars = "0123456789" +
                 "abcdefghijklmnopqrstuvwxyz" +
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
                 ".-_";
-        String validate = value.substring(prefix.length());
+        if(Objects.isNull(value)){
+            return "";
+        }
         StringBuilder buf = new StringBuilder();
-        buf.append(prefix);
-        for (char c : validate.toCharArray()) {
+        for (char c : value.toCharArray()) {
             if (validChars.contains(String.valueOf(c))) {
                 buf.append(c);
             }

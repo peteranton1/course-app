@@ -18,7 +18,7 @@ public class ViewData {
 
     public ViewData withMessage(String message) {
         Map<String, Object> modelTemp = new HashMap<>(model);
-        modelTemp.putIfAbsent("message", MessageEscaper.escapeString(message));
+        modelTemp.putIfAbsent("message", MessageEscaper.escaper.escapeString(message));
         return ViewData.builder()
                 .urlPath(urlPath)
                 .viewName(viewName)

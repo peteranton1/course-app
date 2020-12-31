@@ -1,14 +1,16 @@
 package io.javabrains.springbootquickstart.courseapi.view;
 
 import com.google.common.escape.Escaper;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@Component
 public class MessageEscaper extends Escaper {
 
-    public static final Escaper escaper = new MessageEscaper()
+    public static final MessageEscaper escaper = new MessageEscaper()
             .addEscape("\"", "&quot;")
             // Note: "&apos;" is not defined in HTML 4.01.
             .addEscape("'", "&#39;")
@@ -22,7 +24,7 @@ public class MessageEscaper extends Escaper {
 
     private Map<String, String> fragments = new HashMap<>();
 
-    public MessageEscaper addEscape(String frag, String replacement) {
+    private MessageEscaper addEscape(String frag, String replacement) {
         fragments.putIfAbsent(frag, replacement);
         return this;
     }
@@ -46,7 +48,7 @@ public class MessageEscaper extends Escaper {
         return temp;
     }
 
-    public static String escapeException(Throwable t) {
+    public String escapeException(Throwable t) {
         String message = t.getMessage();
         if (Objects.isNull(message)) {
             return t.getClass().getSimpleName();
@@ -54,7 +56,7 @@ public class MessageEscaper extends Escaper {
         return escapeString(message);
     }
 
-    public static String escapeString(String s) {
+    public String escapeString(String s) {
         if (Objects.isNull(s)) {
             return "";
         }
