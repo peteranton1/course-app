@@ -1,6 +1,7 @@
 package io.courseapi.controller;
 
 import com.google.common.collect.ImmutableMap;
+import io.courseapi.resource.CourseResource;
 import io.courseapi.view.FieldValidator;
 import io.courseapi.view.MessageEscaper;
 import io.courseapi.resource.TopicResource;
@@ -28,8 +29,8 @@ public class ViewController {
     @RequestMapping("/")
     public ModelAndView home() {
         try {
-            ViewData data = viewService.listHome(HOME);
-            return new ModelAndView(data.getViewName(), data.getModel());
+            ViewData viewData = viewService.listHome(HOME);
+            return new ModelAndView(viewData.getViewName(), viewData.getModel());
         } catch (Exception e) {
             return new ModelAndView(HOME.getTemplatePath() +
                     "?message=Error Rendering");
@@ -85,7 +86,7 @@ public class ViewController {
         try {
             topicId = validator.sanitiseId(topicId);
             message = escaper.escapeString(topicId) + ": ";
-            TopicResource topicUpdate = viewService.deleteTopic(topicId);
+            TopicResource topicDelete = viewService.deleteTopic(topicId);
             message += "deleted.";
         } catch (Exception e) {
             message += "Error deleting. ";
@@ -120,6 +121,65 @@ public class ViewController {
             return new ModelAndView(data.getViewName(), data.getModel());
         } catch (Throwable t) {
             return new ModelAndView(COURSE_EDIT.getTemplatePath(),
+                    ImmutableMap.of("message",
+                            "Error Rendering: " + escaper.escapeException(t)));
+        }
+    }
+
+    @PostMapping("/topic/{topicId}/course/{courseId}/update")
+    public ModelAndView courseUpdate(@PathVariable String topicId,
+                                     @PathVariable String courseId,
+                                    @ModelAttribute CourseResource course) {
+        String message = "";
+        try {
+            topicId = validator.sanitiseId(topicId);
+            courseId = validator.sanitiseId(courseId);
+            course.setTopicId(topicId);
+            course.setId(courseId);
+            message = escaper.escapeString(topicId) + ": ";
+            CourseResource courseUpdate = viewService.saveCourse(course);
+            message += "saved.";
+        } catch (Exception e) {
+            message += "Error saving. ";
+        }
+        String url = "redirect:/topic/" +
+                topicId + "/course" +
+                "?message=" + escaper.escapeString(message);
+        return new ModelAndView(url);
+    }
+
+    @GetMapping("/topic/{topicId}/course/{courseId}/delete")
+    public ModelAndView courseDelete(@PathVariable String topicId,
+                                     @PathVariable String courseId) {
+        String message = "";
+        try {
+            topicId = validator.sanitiseId(topicId);
+            courseId = validator.sanitiseId(courseId);
+            message = escaper.escapeString(topicId) + ": ";
+            CourseResource courseDeleted = viewService.deleteCourse(topicId, courseId);
+            message += "deleted.";
+        } catch (Exception e) {
+            message += "Error deleting. ";
+        }
+        String url = "redirect:/topic/" +
+                topicId + "/course" +
+                "?message=" + escaper.escapeString(message);
+        return new ModelAndView(url);
+    }
+
+    @RequestMapping("/topic/{topicId}/course/{courseId}/lesson")
+    public ModelAndView lessonList(@PathVariable String topicId,
+                                   @PathVariable String courseId,
+                                   @RequestParam @Nullable String message) {
+        try {
+            topicId = validator.sanitiseId(topicId);
+            courseId = validator.sanitiseId(courseId);
+            message = escaper.escapeString(message);
+            ViewData data = viewService.listLesson(topicId, courseId, message);
+            return new ModelAndView(data.getViewName(),
+                    data.withMessage(message).getModel());
+        } catch (Throwable t) {
+            return new ModelAndView(COURSE.getTemplatePath(),
                     ImmutableMap.of("message",
                             "Error Rendering: " + escaper.escapeException(t)));
         }

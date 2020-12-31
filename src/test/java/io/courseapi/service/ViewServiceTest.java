@@ -4,6 +4,7 @@ package io.courseapi.service;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.courseapi.resource.CourseResource;
+import io.courseapi.resource.LessonResource;
 import io.courseapi.resource.TopicResource;
 import io.courseapi.view.IdGenerator;
 import io.courseapi.view.ViewData;
@@ -29,6 +30,9 @@ class ViewServiceTest {
 
     @Mock
     private CourseService courseService;
+
+    @Mock
+    private LessonService lessonService;
 
     @Mock
     private IdGenerator idGenerator;
@@ -115,6 +119,32 @@ class ViewServiceTest {
                 .build();
 
         ViewData actual = underTest.listCourse(topicId, message);
+
+        Assertions.assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void shouldListLessonWhenOk() {
+        String topicId = "Y";
+        String courseId = "Z";
+        when(idGenerator.generateId(any(), anyInt())).thenReturn("X");
+        ImmutableList<LessonResource> lessons = ImmutableList.of();
+        when(lessonService.getAllLessonResources(topicId, courseId)).thenReturn(lessons);
+
+        ImmutableList<String> urlPath = ImmutableList.of("", "topic", topicId, "course", courseId, "lesson");
+        String message = "";
+        ViewData expected = ViewData.builder()
+                .urlPath(urlPath)
+                .viewName(LESSON.getTemplatePath())
+                .model(ImmutableMap.of(
+                        "breadcrumbs", urlPath,
+                        "topicId", topicId,
+                        "courseId", courseId,
+                        "lessons", lessons,
+                        "message", message))
+                .build();
+
+        ViewData actual = underTest.listLesson(topicId, courseId, message);
 
         Assertions.assertThat(actual).isEqualTo(expected);
     }

@@ -13,7 +13,9 @@ public enum ViewName {
     TOPIC(ImmutableList.of("","topic"), "views/topic/list"),
     TOPIC_EDIT(ImmutableList.of("","topic"), "views/topic/edit"),
     COURSE(ImmutableList.of("","topic","course"), "views/course/list"),
-    COURSE_EDIT(ImmutableList.of("","topic","course"), "views/course/edit");
+    COURSE_EDIT(ImmutableList.of("","topic","course"), "views/course/edit"),
+    LESSON(ImmutableList.of("","topic","course","lesson"), "views/lesson/list"),
+    LESSON_EDIT(ImmutableList.of("","topic","course","lesson"), "views/lesson/edit");
 
     private final List<String> urlPath;
     private final String templatePath;

@@ -80,6 +80,6 @@ public class CourseController {
             value = "/topics/{topicId}/courses/{courseId}")
     public HttpEntity<CourseResource> deleteCourseResource(@PathVariable String topicId,
                                                            @PathVariable String courseId) {
-        return new ResponseEntity<>(courseService.deleteCourseById(courseId), HttpStatus.OK);
+        return new ResponseEntity<>(courseService.deleteCourseById(topicId, courseId), HttpStatus.OK);
     }
 }

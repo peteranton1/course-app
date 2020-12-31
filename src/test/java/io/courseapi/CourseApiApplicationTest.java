@@ -160,6 +160,30 @@ public class CourseApiApplicationTest {
     }
 
     @Test
+    public void testLessonList() throws Exception {
+        ResponseEntity<String> entity = getRestTemplate().getForEntity(
+                TEST_HOST + "/topic/java101/course/java101.01/lesson", String.class);
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
+        String expectedBodyFrag1 = "<!DOCTYPE html><html><head>" +
+                "<title>List Lessons [, topic, java101, course, java101.01, lesson]</title>" +
+                "<meta http-equiv='\"Content-Type\" content=\"text/html; charset=utf-8\"'/>" +
+                "<link rel='stylesheet' href='/css/bootstrap.min.css'/></head><body class='body'>" +
+                "<div class='container'><div class='navbar'><div class='navbar-inner'>" +
+                "<a class='brand' href='/'>Topics, Courses and Lessons </a><var/>" +
+                "<a class='brand' href='/topic/java101/course/java101.01/lesson'>" +
+                "/topic/java101/course/java101.01/lesson</a></div></div>" +
+                "<table class='table'><tr><td></td></tr></table>" +
+                "<table class='table'><tr><td><ul>" ;
+        String expectedBodyFrag2 = "<li><a href='/topic/java101/course/java101.01/lesson/java101.01.01'>" +
+                "Java 101.01.01 : Java 101.01.01 Lesson 01</a></li>" ;
+        String expectedBodyFrag3 = "<a href='/topic/java101/course/java101.01/lesson/add'>Add new lesson</a>";
+        String actualBody = entity.getBody();
+        assertThat(actualBody).contains(expectedBodyFrag1);
+        assertThat(actualBody).contains(expectedBodyFrag2);
+        assertThat(actualBody).contains(expectedBodyFrag3);
+    }
+
+    @Test
     public void testCourseEdit() throws Exception {
         ResponseEntity<String> entity = getRestTemplate().getForEntity(
                 TEST_HOST + "/topic/java101/course/java101.01", String.class);

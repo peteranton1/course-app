@@ -3,6 +3,7 @@ package io.courseapi.service;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.courseapi.resource.CourseResource;
+import io.courseapi.resource.LessonResource;
 import io.courseapi.resource.TopicResource;
 import io.courseapi.view.IdGenerator;
 import io.courseapi.view.ViewData;
@@ -26,6 +27,9 @@ public class ViewService {
 
     @Autowired
     CourseService courseService;
+
+    @Autowired
+    LessonService lessonService;
 
     @Autowired
     IdGenerator idGenerator;
@@ -82,6 +86,23 @@ public class ViewService {
                 .build();
     }
 
+    public CourseResource saveCourse(CourseResource course) {
+        return courseService.updateCourseResource(course);
+    }
+
+    public CourseResource deleteCourse(String topicId, String courseId) {
+        return courseService.deleteCourseById(topicId, courseId);
+    }
+
+    public ViewData listLesson(String topicId, String courseId, String message) {
+        final ViewName viewName = ViewName.LESSON;
+        return ViewData.builder()
+                .urlPath(constructBreadcrumb(viewName, topicId, courseId))
+                .viewName(viewName.getTemplatePath())
+                .model(lessonList(viewName, topicId, courseId, message))
+                .build();
+    }
+
     private Map<String, Object> homeList(ViewName viewName) {
         return ImmutableMap.of(
                 "breadcrumbs", constructBreadcrumb(viewName)
@@ -119,6 +140,27 @@ public class ViewService {
                     "breadcrumbs", constructBreadcrumb(viewName, topicId),
                     "topicId", topicId,
                     "courses", ImmutableList.of(),
+                    "message", Optional.ofNullable(message).orElse("Unknown Error")
+            );
+        }
+    }
+
+    private Map<String, Object> lessonList(ViewName viewName, String topicId, String courseId, String message) {
+        try {
+            List<LessonResource> allLessonResources = lessonService.getAllLessonResources(topicId, courseId);
+            return ImmutableMap.of(
+                    "breadcrumbs", constructBreadcrumb(viewName, topicId, courseId),
+                    "topicId", topicId,
+                    "courseId", courseId,
+                    "lessons", allLessonResources,
+                    "message", Optional.ofNullable(message).orElse("")
+            );
+        } catch(Exception e){
+            return ImmutableMap.of(
+                    "breadcrumbs", constructBreadcrumb(viewName, topicId, courseId),
+                    "topicId", topicId,
+                    "courseId", courseId,
+                    "lessons", ImmutableList.of(),
                     "message", Optional.ofNullable(message).orElse("Unknown Error")
             );
         }
@@ -162,9 +204,9 @@ public class ViewService {
         }
     }
 
-    private void addIfPresent(List<String> input, List<String> outlist, int i) {
+    private void addIfPresent(List<String> input, List<String> outlet, int i) {
         if(input.size() > i ) {
-            outlist.add(input.get(i));
+            outlet.add(input.get(i));
         }
     }
 

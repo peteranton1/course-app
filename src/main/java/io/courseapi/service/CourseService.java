@@ -44,7 +44,8 @@ public class CourseService {
         return courseAssembler.toResource(courseUpdated);
     }
 
-    public CourseResource deleteCourseById(String courseId) {
+    public CourseResource deleteCourseById(String topicId, String courseId) {
+        requireNonNull(topicId);
         requireNonNull(courseId);
         Course course = courseRepository
                 .findById(courseId)
