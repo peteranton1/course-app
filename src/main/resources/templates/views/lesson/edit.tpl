@@ -3,19 +3,16 @@ layout 'layouts/main.tpl',
         breadcrumbs:  breadcrumbs ?: '',
         message: message ?: '',
         mainBody: contents {
-            boolean exists = course?.id && !"add".equals(course?.id)
+            boolean exists = !"add".equals(lessonId)
             div(class: article){
                 form (id:'editForm', action: breadcrumbs.join("/")+"/update", method:'post') {
                     if(exists){
-                        input(name: 'id', type: 'hidden', value: course.id ?: '')
-                    } else {
-                        label(for: 'Id', 'Id')
-                        input(name: 'id', type: 'text', value: newId)
+                        input(name: 'id', type: 'hidden', value: lesson.id ?: '')
                     }
                     label(for: 'Name', 'Name')
-                    input(name: 'name', type: 'text', value: course.name ?: newId)
+                    input(name: 'name', type: 'text', value: lesson.name ?: newId)
                     label(for: 'Description', 'Description')
-                    input(name: 'description', type: 'text', value: course.description ?: newId)
+                    input(name: 'description', type: 'text', value: lesson.description ?: newId)
                     div(class: 'form-actions') {
                         input(type: 'submit', value: 'Submit')
                     }
@@ -23,16 +20,11 @@ layout 'layouts/main.tpl',
             }
             div(class: article){
                 if(exists){
-                    div("Maintain the lists of lessons.")
-                    a(class: 'brand',
-                            href: "/topic/$topicId/course/$course.id/lesson") {
-                        yield "See Lessons for Course $course.id"
-                    }
                     div("&nbsp;")
-                    div("Remove Course $course.name: $course.description (only if all lessons removed first)")
+                    div("Remove Lesson $lesson.name: $lesson.description")
                     a(class: 'brand',
-                            href: "/topic/$topicId/course/$course.id/delete") {
-                        yield "Delete Topic $course.name: $course.description"
+                            href: "/topic/$topicId/course/$courseId/lesson/$lesson.id/delete") {
+                        yield "Delete Lesson $lesson.name: $lesson.description"
                     }
                 }
             }

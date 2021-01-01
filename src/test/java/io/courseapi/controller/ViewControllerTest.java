@@ -3,6 +3,7 @@ package io.courseapi.controller;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.courseapi.resource.CourseResource;
+import io.courseapi.resource.LessonResource;
 import io.courseapi.resource.TopicResource;
 import io.courseapi.service.ViewService;
 import io.courseapi.view.FieldValidator;
@@ -178,6 +179,36 @@ class ViewControllerTest {
     }
 
     @Test
+    void shouldLessonEditWhenOk() {
+        String message = "";
+        String topicId = "X";
+        String courseId = "Y";
+        String lessonId = "Z";
+        ImmutableMap<String, Object> modelMap = ImmutableMap.of(
+                "X1key", "X1value",
+                "message", message);
+        ImmutableList<String> urlPath = ImmutableList.of("",
+                "topic", topicId, "course", courseId, "lesson", lessonId);
+        String viewName = "views/lesson/edit";
+        ViewData viewData = ViewData.builder()
+                .viewName(viewName)
+                .urlPath(urlPath)
+                .model(modelMap)
+                .build();
+        when(validator.sanitiseId(topicId)).thenReturn(topicId);
+        when(validator.sanitiseId(courseId)).thenReturn(courseId);
+        when(validator.sanitiseId(lessonId)).thenReturn(lessonId);
+        when(viewService.editLesson(topicId, courseId, lessonId)).thenReturn(viewData);
+        ModelAndView expected = new ModelAndView(
+                viewData.getViewName(), viewData.getModel());
+
+        ModelAndView actual = underTest.lessonEdit(topicId, courseId, lessonId);
+
+        Assertions.assertThat(actual.getViewName()).isEqualTo(expected.getViewName());
+        Assertions.assertThat(actual.getModel()).isEqualTo(expected.getModel());
+    }
+
+    @Test
     void shouldTopicUpdateWhenOk() {
         String message = "";
         String topicId = "X";
@@ -208,7 +239,7 @@ class ViewControllerTest {
         String courseId = "Y";
         ImmutableMap<String, Object> modelMap = ImmutableMap.of();
         ImmutableList<String> urlPath = ImmutableList.of("", "topic", topicId, "course", courseId, "update");
-        String viewName = "redirect:/topic/X/course?message=X: saved.";
+        String viewName = "redirect:/topic/X/course?message=Y: saved.";
         ViewData viewData = ViewData.builder()
                 .viewName(viewName)
                 .urlPath(urlPath)
@@ -216,11 +247,41 @@ class ViewControllerTest {
                 .build();
         CourseResource course = CourseResource.builder().build();
         when(validator.sanitiseId(topicId)).thenReturn(topicId);
+        when(validator.sanitiseId(courseId)).thenReturn(courseId);
         when(viewService.saveCourse(course)).thenReturn(course);
         ModelAndView expected = new ModelAndView(
                 viewData.getViewName(), viewData.getModel());
 
         ModelAndView actual = underTest.courseUpdate(topicId, courseId, course);
+
+        Assertions.assertThat(actual.getViewName()).isEqualTo(expected.getViewName());
+        Assertions.assertThat(actual.getModel()).isEqualTo(expected.getModel());
+    }
+
+    @Test
+    void shouldLessonUpdateWhenOk() {
+        String message = "";
+        String topicId = "X";
+        String courseId = "Y";
+        String lessonId = "Z";
+        ImmutableMap<String, Object> modelMap = ImmutableMap.of();
+        ImmutableList<String> urlPath = ImmutableList.of("",
+                "topic", topicId, "course", courseId, "lesson", lessonId, "update");
+        String viewName = "redirect:/topic/X/course/Y/lesson?message=Z: saved.";
+        ViewData viewData = ViewData.builder()
+                .viewName(viewName)
+                .urlPath(urlPath)
+                .model(modelMap)
+                .build();
+        LessonResource lesson = LessonResource.builder().build();
+        when(validator.sanitiseId(topicId)).thenReturn(topicId);
+        when(validator.sanitiseId(courseId)).thenReturn(courseId);
+        when(validator.sanitiseId(lessonId)).thenReturn(lessonId);
+        when(viewService.saveLesson(lesson)).thenReturn(lesson);
+        ModelAndView expected = new ModelAndView(
+                viewData.getViewName(), viewData.getModel());
+
+        ModelAndView actual = underTest.lessonUpdate(topicId, courseId, lessonId, lesson);
 
         Assertions.assertThat(actual.getViewName()).isEqualTo(expected.getViewName());
         Assertions.assertThat(actual.getModel()).isEqualTo(expected.getModel());
@@ -257,13 +318,12 @@ class ViewControllerTest {
         String courseId = "Y";
         ImmutableMap<String, Object> modelMap = ImmutableMap.of();
         ImmutableList<String> urlPath = ImmutableList.of("", "topic", topicId, "course", courseId, "delete");
-        String viewName = "redirect:/topic/X/course?message=X: deleted.";
+        String viewName = "redirect:/topic/X/course?message=Y: deleted.";
         ViewData viewData = ViewData.builder()
                 .viewName(viewName)
                 .urlPath(urlPath)
                 .model(modelMap)
                 .build();
-        TopicResource topic = TopicResource.builder().build();
         CourseResource course = CourseResource.builder().build();
         when(validator.sanitiseId(topicId)).thenReturn(topicId);
         when(validator.sanitiseId(courseId)).thenReturn(courseId);
@@ -272,6 +332,35 @@ class ViewControllerTest {
                 viewData.getViewName(), viewData.getModel());
 
         ModelAndView actual = underTest.courseDelete(topicId, courseId);
+
+        Assertions.assertThat(actual.getViewName()).isEqualTo(expected.getViewName());
+        Assertions.assertThat(actual.getModel()).isEqualTo(expected.getModel());
+    }
+
+    @Test
+    void shouldLessonDeleteWhenOk() {
+        String message = "";
+        String topicId = "X";
+        String courseId = "Y";
+        String lessonId = "Z";
+        ImmutableMap<String, Object> modelMap = ImmutableMap.of();
+        ImmutableList<String> urlPath = ImmutableList.of("",
+                "topic", topicId, "course", courseId, "lesson", lessonId, "delete");
+        String viewName = "redirect:/topic/X/course/Y/lesson?message=Z: deleted.";
+        ViewData viewData = ViewData.builder()
+                .viewName(viewName)
+                .urlPath(urlPath)
+                .model(modelMap)
+                .build();
+        LessonResource lesson = LessonResource.builder().build();
+        when(validator.sanitiseId(topicId)).thenReturn(topicId);
+        when(validator.sanitiseId(courseId)).thenReturn(courseId);
+        when(validator.sanitiseId(lessonId)).thenReturn(lessonId);
+        when(viewService.deleteLesson(topicId, courseId, lessonId)).thenReturn(lesson);
+        ModelAndView expected = new ModelAndView(
+                viewData.getViewName(), viewData.getModel());
+
+        ModelAndView actual = underTest.lessonDelete(topicId, courseId, lessonId);
 
         Assertions.assertThat(actual.getViewName()).isEqualTo(expected.getViewName());
         Assertions.assertThat(actual.getModel()).isEqualTo(expected.getModel());

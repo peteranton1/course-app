@@ -77,23 +77,26 @@ class ViewServiceTest {
 
     @Test
     void shouldEditTopicWhenOk() {
-        when(idGenerator.generateId(any(), anyInt())).thenReturn("X");
+        String topicId = "X";
+        when(idGenerator.generateId(any(), anyInt())).thenReturn(topicId);
         ImmutableList<TopicResource> topics = ImmutableList.of();
         when(topicService.getAllTopicResources()).thenReturn(topics);
 
-        List<String> urlPath = ImmutableList.of("", "topic", "X");
+        List<String> urlPath = ImmutableList.of("", "topic", topicId);
         TopicResource topic = TopicResource.builder()
+                .id(topicId)
+                .name(topicId)
+                .description(topicId)
                 .build();
         ViewData expected = ViewData.builder()
                 .urlPath(urlPath)
                 .viewName(TOPIC_EDIT.getTemplatePath())
                 .model(ImmutableMap.of(
                         "breadcrumbs", urlPath,
-                        "topic", topic,
-                        "newId", "X"))
+                        "topicId", topicId,
+                        "topic", topic))
                 .build();
 
-        String topicId = "X";
         ViewData actual = underTest.editTopic(topicId);
 
         Assertions.assertThat(actual).isEqualTo(expected);
@@ -151,15 +154,15 @@ class ViewServiceTest {
 
     @Test
     void shouldEditCourseWhenOk() {
-        when(idGenerator.generateId(any(), anyInt())).thenReturn("X");
         String topicId = "Y";
         String courseId = "X";
+        when(idGenerator.generateId(any(), anyInt())).thenReturn(courseId);
         CourseResource course = CourseResource.builder()
                 .id(courseId)
                 .name(courseId + "name")
                 .description(courseId + "Desc")
                 .build();
-        when(courseService.findCourseResource(topicId,courseId)).thenReturn(Optional.of(course));
+        when(courseService.findCourseResource(topicId, courseId)).thenReturn(Optional.of(course));
 
         List<String> urlPath = ImmutableList.of("", "topic", topicId, "course", courseId);
         ViewData expected = ViewData.builder()
@@ -168,11 +171,44 @@ class ViewServiceTest {
                 .model(ImmutableMap.of(
                         "breadcrumbs", urlPath,
                         "topicId", topicId,
-                        "course", course,
-                        "newId", "X"))
+                        "courseId", courseId,
+                        "course", course
+                ))
                 .build();
 
         ViewData actual = underTest.editCourse(topicId, courseId);
+
+        Assertions.assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void shouldEditLessonWhenOk() {
+        String topicId = "Y";
+        String courseId = "X";
+        String lessonId = "Z";
+        when(idGenerator.generateId(any(), anyInt())).thenReturn(lessonId);
+        LessonResource lesson = LessonResource.builder()
+                .id(lessonId)
+                .name(lessonId + "name")
+                .description(lessonId + "Desc")
+                .build();
+        when(lessonService.findLessonResource(topicId, courseId, lessonId))
+                .thenReturn(Optional.of(lesson));
+
+        List<String> urlPath = ImmutableList.of("", "topic", topicId,
+                "course", courseId, "lesson", lessonId);
+        ViewData expected = ViewData.builder()
+                .urlPath(urlPath)
+                .viewName(LESSON_EDIT.getTemplatePath())
+                .model(ImmutableMap.of(
+                        "breadcrumbs", urlPath,
+                        "topicId", topicId,
+                        "courseId", courseId,
+                        "lessonId", lessonId,
+                        "lesson", lesson))
+                .build();
+
+        ViewData actual = underTest.editLesson(topicId, courseId, lessonId);
 
         Assertions.assertThat(actual).isEqualTo(expected);
     }

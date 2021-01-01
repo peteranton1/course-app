@@ -29,7 +29,10 @@ public class LessonService {
         return lessonAssembler.toResource(allLessons);
     }
 
-    public Optional<LessonResource> findLessonResource(String courseId, String lessonId) {
+    public Optional<LessonResource> findLessonResource(String topicId,
+                                                       String courseId,
+                                                       String lessonId) {
+        requireNonNull(topicId);
         requireNonNull(courseId);
         requireNonNull(lessonId);
         return lessonRepository.findById(lessonId)
@@ -45,7 +48,9 @@ public class LessonService {
         return lessonAssembler.toResource(lessonUpdated);
     }
 
-    public LessonResource deleteLessonById(String lessonId) {
+    public LessonResource deleteLessonById(String topicId, String courseId, String lessonId) {
+        requireNonNull(topicId);
+        requireNonNull(courseId);
         requireNonNull(lessonId);
         Lesson lesson = lessonRepository
                 .findById(lessonId)

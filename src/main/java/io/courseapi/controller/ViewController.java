@@ -2,11 +2,10 @@ package io.courseapi.controller;
 
 import com.google.common.collect.ImmutableMap;
 import io.courseapi.resource.CourseResource;
-import io.courseapi.view.FieldValidator;
-import io.courseapi.view.MessageEscaper;
+import io.courseapi.resource.LessonResource;
 import io.courseapi.resource.TopicResource;
 import io.courseapi.service.ViewService;
-import io.courseapi.view.ViewData;
+import io.courseapi.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
@@ -18,11 +17,17 @@ import static io.courseapi.view.ViewName.*;
 @Controller
 public class ViewController {
 
+    private static final String ADD = "add";
+    private static final int ID_WIDTH = 4;
+
     @Autowired
     private ViewService viewService;
 
     @Autowired
     private FieldValidator validator;
+
+    @Autowired
+    IdGenerator idGenerator;
 
     private final MessageEscaper escaper = MessageEscaper.escaper;
 
@@ -53,6 +58,9 @@ public class ViewController {
     @GetMapping("/topic/{topicId}")
     public ModelAndView topicEdit(@PathVariable String topicId) {
         try {
+            if(ADD.equals(topicId)){
+                topicId = idGenerator.generateId("T", ID_WIDTH);
+            }
             topicId = validator.sanitiseId(topicId);
             ViewData data = viewService.editTopic(topicId);
             return new ModelAndView(data.getViewName(), data.getModel());
@@ -116,8 +124,12 @@ public class ViewController {
                                    @PathVariable String courseId) {
         try {
             topicId = validator.sanitiseId(topicId);
+            if(ADD.equals(courseId)){
+                courseId = topicId + ".";
+                courseId += idGenerator.generateId("C", ID_WIDTH);
+            }
             courseId = validator.sanitiseId(courseId);
-            ViewData data = viewService.editCourse(topicId,courseId);
+            ViewData data = viewService.editCourse(topicId, courseId);
             return new ModelAndView(data.getViewName(), data.getModel());
         } catch (Throwable t) {
             return new ModelAndView(COURSE_EDIT.getTemplatePath(),
@@ -129,14 +141,14 @@ public class ViewController {
     @PostMapping("/topic/{topicId}/course/{courseId}/update")
     public ModelAndView courseUpdate(@PathVariable String topicId,
                                      @PathVariable String courseId,
-                                    @ModelAttribute CourseResource course) {
+                                     @ModelAttribute CourseResource course) {
         String message = "";
         try {
             topicId = validator.sanitiseId(topicId);
             courseId = validator.sanitiseId(courseId);
             course.setTopicId(topicId);
             course.setId(courseId);
-            message = escaper.escapeString(topicId) + ": ";
+            message = escaper.escapeString(courseId) + ": ";
             CourseResource courseUpdate = viewService.saveCourse(course);
             message += "saved.";
         } catch (Exception e) {
@@ -155,7 +167,7 @@ public class ViewController {
         try {
             topicId = validator.sanitiseId(topicId);
             courseId = validator.sanitiseId(courseId);
-            message = escaper.escapeString(topicId) + ": ";
+            message = escaper.escapeString(courseId) + ": ";
             CourseResource courseDeleted = viewService.deleteCourse(topicId, courseId);
             message += "deleted.";
         } catch (Exception e) {
@@ -183,5 +195,73 @@ public class ViewController {
                     ImmutableMap.of("message",
                             "Error Rendering: " + escaper.escapeException(t)));
         }
+    }
+
+    @GetMapping("/topic/{topicId}/course/{courseId}/lesson/{lessonId}")
+    public ModelAndView lessonEdit(@PathVariable String topicId,
+                                   @PathVariable String courseId,
+                                   @PathVariable String lessonId) {
+        try {
+            topicId = validator.sanitiseId(topicId);
+            courseId = validator.sanitiseId(courseId);
+            if(ADD.equals(lessonId)){
+                lessonId = courseId + ".";
+                lessonId += idGenerator.generateId("L", ID_WIDTH);
+            }
+            lessonId = validator.sanitiseId(lessonId);
+            ViewData data = viewService.editLesson(topicId, courseId, lessonId);
+            return new ModelAndView(data.getViewName(), data.getModel());
+        } catch (Throwable t) {
+            return new ModelAndView(LESSON_EDIT.getTemplatePath(),
+                    ImmutableMap.of("message",
+                            "Error Rendering: " + escaper.escapeException(t)));
+        }
+    }
+
+    @PostMapping("/topic/{topicId}/course/{courseId}/lesson/{lessonId}/update")
+    public ModelAndView lessonUpdate(@PathVariable String topicId,
+                                     @PathVariable String courseId,
+                                     @PathVariable String lessonId,
+                                     @ModelAttribute LessonResource lesson) {
+        String message = "";
+        try {
+            topicId = validator.sanitiseId(topicId);
+            courseId = validator.sanitiseId(courseId);
+            lessonId = validator.sanitiseId(lessonId);
+            lesson.setCourseId(courseId);
+            lesson.setId(lessonId);
+            message = escaper.escapeString(lessonId) + ": ";
+            LessonResource lessonUpdate = viewService.saveLesson(lesson);
+            message += "saved.";
+        } catch (Exception e) {
+            message += "Error saving. ";
+        }
+        String url = "redirect:/topic/" +
+                topicId + "/course/" +
+                courseId + "/lesson" +
+                "?message=" + escaper.escapeString(message);
+        return new ModelAndView(url);
+    }
+
+    @GetMapping("/topic/{topicId}/course/{courseId}/lesson/{lessonId}/delete")
+    public ModelAndView lessonDelete(@PathVariable String topicId,
+                                     @PathVariable String courseId,
+                                     @PathVariable String lessonId) {
+        String message = "";
+        try {
+            topicId = validator.sanitiseId(topicId);
+            courseId = validator.sanitiseId(courseId);
+            lessonId = validator.sanitiseId(lessonId);
+            message = escaper.escapeString(lessonId) + ": ";
+            LessonResource lessonDeleted = viewService.deleteLesson(topicId, courseId, lessonId);
+            message += "deleted.";
+        } catch (Exception e) {
+            message += "Error deleting. ";
+        }
+        String url = "redirect:/topic/" +
+                topicId + "/course/" +
+                courseId + "/lesson" +
+                "?message=" + escaper.escapeString(message);
+        return new ModelAndView(url);
     }
 }

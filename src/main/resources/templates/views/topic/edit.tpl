@@ -3,14 +3,11 @@ layout 'layouts/main.tpl',
         breadcrumbs:  breadcrumbs ?: '',
         message: message ?: '',
         mainBody: contents {
-            boolean exists = topic?.id && !"add".equals(topic?.id)
+            boolean exists = !"add".equals(topicId)
             div(class: article){
                 form (id:'editForm', action: breadcrumbs.join("/")+"/update", method:'post') {
                     if(exists){
                         input(name: 'id', type: 'hidden', value: topic.id ?: '')
-                    } else {
-                        label(for: 'Id', 'Id')
-                        input(name: 'id', type: 'text', value: newId)
                     }
                     label(for: 'Name', 'Name')
                     input(name: 'name', type: 'text', value: topic.name ?: newId)

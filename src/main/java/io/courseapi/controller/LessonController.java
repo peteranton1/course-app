@@ -32,21 +32,22 @@ public class LessonController {
             @PathVariable String courseId) {
         List<LessonResource> allLessonResources = lessonService
                 .getAllLessonResources(topicId, courseId);
-        allLessonResources.forEach(resource -> resource
+        allLessonResources.forEach(lesson -> lesson
                 .add(linkTo(methodOn(LessonController.class)
-                        .findLessonResource(resource.getCourseId(), resource.getId()))
+                        .findLessonResource(topicId, lesson.getCourseId(), lesson.getId()))
                         .withSelfRel()));
         return new ResponseEntity<>(allLessonResources, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET,
             value = "/topics/{topicId}/courses/{courseId}/lessons/{lessonId}")
-    public LessonResource findLessonResource(@PathVariable String courseId,
+    public LessonResource findLessonResource(@PathVariable String topicId,
+                                             @PathVariable String courseId,
                                              @PathVariable String lessonId) {
-        return lessonService.findLessonResource(courseId, lessonId)
-                .map(resource -> resource
+        return lessonService.findLessonResource(topicId, courseId, lessonId)
+                .map(lesson -> lesson
                         .add(linkTo(methodOn(LessonController.class)
-                                .findLessonResource(resource.getCourseId(), resource.getId()))
+                                .findLessonResource(topicId, lesson.getCourseId(), lesson.getId()))
                                 .withSelfRel()))
                 .orElse(null);
     }
@@ -83,7 +84,9 @@ public class LessonController {
 
     @RequestMapping(method = RequestMethod.DELETE,
             value = "/topics/{topicId}/courses/{courseId}/lessons/{lessonId}")
-    public HttpEntity<LessonResource> deleteLessonResource(@PathVariable String lessonId) {
-        return new ResponseEntity<>(lessonService.deleteLessonById(lessonId), HttpStatus.OK);
+    public HttpEntity<LessonResource> deleteLessonResource(@PathVariable String topicId,
+                                                           @PathVariable String courseId,
+                                                           @PathVariable String lessonId) {
+        return new ResponseEntity<>(lessonService.deleteLessonById(topicId, courseId, lessonId), HttpStatus.OK);
     }
 }

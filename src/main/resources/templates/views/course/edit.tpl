@@ -3,14 +3,11 @@ layout 'layouts/main.tpl',
         breadcrumbs:  breadcrumbs ?: '',
         message: message ?: '',
         mainBody: contents {
-            boolean exists = course?.id && !"add".equals(course?.id)
+            boolean exists = !"add".equals(courseId)
             div(class: article){
                 form (id:'editForm', action: breadcrumbs.join("/")+"/update", method:'post') {
                     if(exists){
                         input(name: 'id', type: 'hidden', value: course.id ?: '')
-                    } else {
-                        label(for: 'Id', 'Id')
-                        input(name: 'id', type: 'text', value: newId)
                     }
                     label(for: 'Name', 'Name')
                     input(name: 'name', type: 'text', value: course.name ?: newId)
@@ -32,7 +29,7 @@ layout 'layouts/main.tpl',
                     div("Remove Course $course.name: $course.description (only if all lessons removed first)")
                     a(class: 'brand',
                             href: "/topic/$topicId/course/$course.id/delete") {
-                        yield "Delete Topic $course.name: $course.description"
+                        yield "Delete Course $course.name: $course.description"
                     }
                 }
             }

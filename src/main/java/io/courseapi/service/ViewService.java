@@ -5,16 +5,12 @@ import com.google.common.collect.ImmutableMap;
 import io.courseapi.resource.CourseResource;
 import io.courseapi.resource.LessonResource;
 import io.courseapi.resource.TopicResource;
-import io.courseapi.view.IdGenerator;
 import io.courseapi.view.ViewData;
 import io.courseapi.view.ViewName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -30,9 +26,6 @@ public class ViewService {
 
     @Autowired
     LessonService lessonService;
-
-    @Autowired
-    IdGenerator idGenerator;
 
     public ViewData listHome(ViewName viewName) {
         return ViewData.builder()
@@ -103,6 +96,23 @@ public class ViewService {
                 .build();
     }
 
+    public ViewData editLesson(String topicId, String courseId, String lessonId) {
+        final ViewName viewName = ViewName.LESSON_EDIT;
+        return ViewData.builder()
+                .urlPath(constructBreadcrumb(viewName, topicId, courseId, lessonId))
+                .viewName(viewName.getTemplatePath())
+                .model(lessonEdit(viewName, topicId, courseId, lessonId))
+                .build();
+    }
+
+    public LessonResource saveLesson(LessonResource lesson) {
+        return lessonService.updateLessonResource(lesson);
+    }
+
+    public LessonResource deleteLesson(String topicId, String courseId, String lessonId) {
+        return lessonService.deleteLessonById(topicId, courseId, lessonId);
+    }
+
     private Map<String, Object> homeList(ViewName viewName) {
         return ImmutableMap.of(
                 "breadcrumbs", constructBreadcrumb(viewName)
@@ -117,7 +127,7 @@ public class ViewService {
                     "topics", allTopicResources,
                     "message", Optional.ofNullable(message).orElse("")
             );
-        } catch(Exception e){
+        } catch (Exception e) {
             return ImmutableMap.of(
                     "breadcrumbs", constructBreadcrumb(viewName),
                     "topics", ImmutableList.of(),
@@ -135,7 +145,7 @@ public class ViewService {
                     "courses", allCourseResources,
                     "message", Optional.ofNullable(message).orElse("")
             );
-        } catch(Exception e){
+        } catch (Exception e) {
             return ImmutableMap.of(
                     "breadcrumbs", constructBreadcrumb(viewName, topicId),
                     "topicId", topicId,
@@ -155,7 +165,7 @@ public class ViewService {
                     "lessons", allLessonResources,
                     "message", Optional.ofNullable(message).orElse("")
             );
-        } catch(Exception e){
+        } catch (Exception e) {
             return ImmutableMap.of(
                     "breadcrumbs", constructBreadcrumb(viewName, topicId, courseId),
                     "topicId", topicId,
@@ -184,7 +194,7 @@ public class ViewService {
                                              String lessonId) {
         List<String> input = viewName.getUrlPath();
         List<String> outlet = new ArrayList<>();
-        if(isNull(input) || input.size()==0) {
+        if (isNull(input) || input.size() == 0) {
             return outlet;
         }
         addIfPresent(input, outlet, 0); // ""
@@ -199,13 +209,13 @@ public class ViewService {
     }
 
     private void addIdIfPresent(String id, List<String> outlet) {
-        if(nonNull(id)) {
+        if (nonNull(id)) {
             outlet.add(id);
         }
     }
 
     private void addIfPresent(List<String> input, List<String> outlet, int i) {
-        if(input.size() > i ) {
+        if (input.size() > i) {
             outlet.add(input.get(i));
         }
     }
@@ -213,25 +223,53 @@ public class ViewService {
     private Map<String, Object> topicEdit(ViewName viewName, String topicId) {
         TopicResource topicResource = topicService
                 .findTopicResource(topicId)
-                .orElse(TopicResource.builder().build());
-        String newId = idGenerator.generateId("T", 6);
+                .orElse(TopicResource.builder()
+                        .id(topicId)
+                        .name(topicId)
+                        .description(topicId)
+                        .build());
         return ImmutableMap.of(
                 "breadcrumbs", constructBreadcrumb(viewName, topicId),
-                "topic", topicResource,
-                "newId", newId
+                "topicId", topicId,
+                "topic", topicResource
         );
     }
 
     private Map<String, Object> courseEdit(ViewName viewName, String topicId, String courseId) {
         CourseResource courseResource = courseService
                 .findCourseResource(topicId, courseId)
-                .orElse(CourseResource.builder().build());
-        String newId = idGenerator.generateId("T", 6);
+                .orElse(CourseResource.builder()
+                        .id(courseId)
+                        .topicId(topicId)
+                        .name(courseId)
+                        .description(courseId)
+                        .build());
         return ImmutableMap.of(
                 "breadcrumbs", constructBreadcrumb(viewName, topicId, courseId),
                 "topicId", topicId,
-                "course", courseResource,
-                "newId", newId
+                "courseId", courseId,
+                "course", courseResource
         );
+    }
+
+    private Map<String, Object> lessonEdit(ViewName viewName,
+                                           String topicId,
+                                           String courseId,
+                                           String lessonId) {
+        LessonResource lessonResource = lessonService
+                .findLessonResource(topicId, courseId, lessonId)
+                .orElse(LessonResource.builder()
+                        .id(lessonId)
+                        .courseId(courseId)
+                        .name(lessonId)
+                        .description(lessonId)
+                        .build());
+        Map<String, Object> outlet = new HashMap<>();
+        outlet.put("breadcrumbs", constructBreadcrumb(viewName, topicId, courseId, lessonId));
+        outlet.put("topicId", topicId);
+        outlet.put("courseId", courseId);
+        outlet.put("lessonId", lessonId);
+        outlet.put("lesson", lessonResource);
+        return ImmutableMap.<String, Object>builder().putAll(outlet).build();
     }
 }
