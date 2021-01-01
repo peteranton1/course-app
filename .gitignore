@@ -205,3 +205,4 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij,scala,macos,windows,linux
 
 mariadb/data/
+build/
