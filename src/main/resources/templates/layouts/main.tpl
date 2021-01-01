@@ -13,7 +13,11 @@ html {
                             href: '/') {
                         yield 'Topics, Courses and Lessons '
                     }
-                    var href = breadcrumbs?.join("/")
+                    var breadcrumbUp = new ArrayList<String>()
+                    for(int i=0;i<breadcrumbs.size()-1;i++) {
+                        breadcrumbUp.add(breadcrumbs.get(i))
+                    }
+                    var href = breadcrumbUp?.join("/")
                     a(class: 'brand',
                         href: "$href") {
                         yield "$href"

@@ -49,18 +49,15 @@ public class CourseApiApplicationTest {
         ResponseEntity<String> entity = getRestTemplate().getForEntity(
                 TEST_HOST, String.class);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
-        String expectedBody = "<!DOCTYPE html><html><head>" +
-                "<title>Topics, Courses, Lessons -  []</title>" +
+        String expectedBody = "<!DOCTYPE html><html><head><title>Topics, Courses, Lessons -  []</title>" +
                 "<meta http-equiv='\"Content-Type\" content=\"text/html; charset=utf-8\"'/>" +
                 "<link rel='stylesheet' href='/css/bootstrap.min.css'/></head>" +
-                "<body class='body'><div class='container'><div class='navbar'>" +
-                "<div class='navbar-inner'><a class='brand' href='/'>Topics, Courses and Lessons </a><var/>" +
-                "<a class='brand' href=''></a></div></div>" +
-                "<table class='table'><tr><td></td></tr></table>" +
+                "<body class='body'><div class='container'><div class='navbar'><div class='navbar-inner'>" +
+                "<a class='brand' href='/'>Topics, Courses and Lessons </a><var/><var/>" +
+                "<a class='brand' href=''></a></div></div><table class='table'><tr><td></td></tr></table>" +
                 "<table class='table'><tr><td><div class=''>" +
                 "<div>Maintain the lists of topics, courses and lessons.</div>" +
-                "<a class='brand' href='/topic'>See Topics, Courses and Lessons </a>" +
-                "</div></td></tr></table>" +
+                "<a class='brand' href='/topic'>See Topics, Courses and Lessons </a></div></td></tr></table>" +
                 "<table class='table'><tr><td></td></tr></table></div></body></html>";
         String actualBody = entity.getBody();
         assertThat(actualBody).contains(expectedBody);
@@ -84,14 +81,14 @@ public class CourseApiApplicationTest {
         String expectedBodyFrag1 = "<!DOCTYPE html><html><head>" +
                 "<title>Topics, Courses, Lessons -  [, topic]</title>" +
                 "<meta http-equiv='\"Content-Type\" content=\"text/html; charset=utf-8\"'/>" +
-                "<link rel='stylesheet' href='/css/bootstrap.min.css'/></head><body class='body'>" +
-                "<div class='container'><div class='navbar'><div class='navbar-inner'>" +
-                "<a class='brand' href='/'>Topics, Courses and Lessons </a><var/>" +
-                "<a class='brand' href='/topic'>/topic</a></div></div>" +
+                "<link rel='stylesheet' href='/css/bootstrap.min.css'/></head>" +
+                "<body class='body'><div class='container'><div class='navbar'><div class='navbar-inner'>" +
+                "<a class='brand' href='/'>Topics, Courses and Lessons </a><var/><var/>" +
+                "<a class='brand' href=''></a></div></div>" +
                 "<table class='table'><tr><td></td></tr></table>" +
-                "<table class='table'><tr><td><ul>";
+                "<table class='table'><tr><td><ul>" ;
         String expectedBodyFrag2 = "<li><a href='/topic/java101'>Java 101 : Java 101 Introductory topic</a></li>";
-        String expectedBodyFrag3 = "<a href='/topic/add'>Add new topic</a>";
+        String expectedBodyFrag3 = "<a href='/topic/add'>Add new topic</a>" ;
         String actualBody = entity.getBody();
         assertThat(actualBody).contains(expectedBodyFrag1);
         assertThat(actualBody).contains(expectedBodyFrag2);
@@ -103,22 +100,24 @@ public class CourseApiApplicationTest {
         ResponseEntity<String> entity = getRestTemplate().getForEntity(
                 TEST_HOST + "/topic/java101", String.class);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
-        String expectedBodyFrag1 = "<!DOCTYPE html><html><head><title>" +
-                "Topics, Courses, Lessons -  [, topic, java101]</title>" +
+        String expectedBodyFrag1 = "<!DOCTYPE html><html><head>" +
+                "<title>Topics, Courses, Lessons -  [, topic, java101]</title>" +
                 "<meta http-equiv='\"Content-Type\" content=\"text/html; charset=utf-8\"'/>" +
-                "<link rel='stylesheet' href='/css/bootstrap.min.css'/></head><body class='body'>" +
-                "<div class='container'><div class='navbar'><div class='navbar-inner'>" +
-                "<a class='brand' href='/'>Topics, Courses and Lessons </a><var/>" +
-                "<a class='brand' href='/topic/java101'>/topic/java101</a></div></div>" +
+                "<link rel='stylesheet' href='/css/bootstrap.min.css'/></head>" +
+                "<body class='body'><div class='container'><div class='navbar'><div class='navbar-inner'>" +
+                "<a class='brand' href='/'>Topics, Courses and Lessons </a><var/><var/>" +
+                "<a class='brand' href='/topic'>/topic</a></div></div>" +
                 "<table class='table'><tr><td></td></tr></table>" +
-                "<table class='table'><tr><td>";
+                "<table class='table'><tr><td>" ;
         String expectedBodyFrag2 = "<div class=''>" +
                 "<form id='editForm' action='/topic/java101/update' method='post'>" +
                 "<input name='id' type='hidden' value='java101'/>" +
-                "<label for='Name'>Name</label><input name='name' type='text' value='Java 101'/>" +
+                "<label for='Name'>Name</label>" +
+                "<input name='name' type='text' value='Java 101'/>" +
                 "<label for='Description'>Description</label>" +
                 "<input name='description' type='text' value='Java 101 Introductory topic'/>" +
-                "<div class='form-actions'><input type='submit' value='Submit'/></div></form></div>" ;
+                "<div class='form-actions'><input type='submit' value='Submit'/>" +
+                "</div></form></div>" ;
         String expectedBodyFrag3 = "<div class=''><div>Maintain the lists of courses and lessons.</div>" +
                 "<a class='brand' href='/topic/java101/course'>See Courses for Topic java101</a>" +
                 "<div>&nbsp;</div>" +
@@ -146,8 +145,8 @@ public class CourseApiApplicationTest {
                 "<meta http-equiv='\"Content-Type\" content=\"text/html; charset=utf-8\"'/>" +
                 "<link rel='stylesheet' href='/css/bootstrap.min.css'/></head><body class='body'>" +
                 "<div class='container'><div class='navbar'><div class='navbar-inner'>" +
-                "<a class='brand' href='/'>Topics, Courses and Lessons </a><var/>" +
-                "<a class='brand' href='/topic/java101/course'>/topic/java101/course</a></div></div>" +
+                "<a class='brand' href='/'>Topics, Courses and Lessons </a><var/><var/>" +
+                "<a class='brand' href='/topic/java101'>/topic/java101</a></div></div>" +
                 "<table class='table'><tr><td></td></tr></table>" +
                 "<table class='table'><tr><td><ul>";
         String expectedBodyFrag2 = "<li><a href='/topic/java101/course/java101.01'>" +
@@ -167,16 +166,16 @@ public class CourseApiApplicationTest {
         String expectedBodyFrag1 = "<!DOCTYPE html><html><head>" +
                 "<title>List Lessons [, topic, java101, course, java101.01, lesson]</title>" +
                 "<meta http-equiv='\"Content-Type\" content=\"text/html; charset=utf-8\"'/>" +
-                "<link rel='stylesheet' href='/css/bootstrap.min.css'/></head><body class='body'>" +
-                "<div class='container'><div class='navbar'><div class='navbar-inner'>" +
-                "<a class='brand' href='/'>Topics, Courses and Lessons </a><var/>" +
-                "<a class='brand' href='/topic/java101/course/java101.01/lesson'>" +
-                "/topic/java101/course/java101.01/lesson</a></div></div>" +
-                "<table class='table'><tr><td></td></tr></table>" +
-                "<table class='table'><tr><td><ul>" ;
-        String expectedBodyFrag2 = "<li><a href='/topic/java101/course/java101.01/lesson/java101.01.01'>" +
-                "Java 101.01.01 : Java 101.01.01 Lesson 01</a></li>" ;
-        String expectedBodyFrag3 = "<a href='/topic/java101/course/java101.01/lesson/add'>Add new lesson</a>";
+                "<link rel='stylesheet' href='/css/bootstrap.min.css'/></head>" +
+                "<body class='body'><div class='container'><div class='navbar'>" +
+                "<div class='navbar-inner'>" +
+                "<a class='brand' href='/'>Topics, Courses and Lessons </a><var/><var/>" +
+                "<a class='brand' href='/topic/java101/course/java101.01'>/topic/java101/course/java101.01</a>" +
+                "</div></div>" ;
+        String expectedBodyFrag2 = "<a href='/topic/java101/course/java101.01/lesson/java101.01.01'>" +
+                "Java 101.01.01 : Java 101.01.01 Lesson 01</a>" ;
+        String expectedBodyFrag3 = "<a href='/topic/java101/course/java101.01/lesson/java101.01.02'>" +
+                "Java 101.01.02 : Java 101.01.02 Lesson 02</a>";
         String actualBody = entity.getBody();
         assertThat(actualBody).contains(expectedBodyFrag1);
         assertThat(actualBody).contains(expectedBodyFrag2);
@@ -191,27 +190,29 @@ public class CourseApiApplicationTest {
         String expectedBodyFrag1 = "<!DOCTYPE html><html><head>" +
                 "<title>Topics, Courses, Lessons -  [, topic, java101, course, java101.01]</title>" +
                 "<meta http-equiv='\"Content-Type\" content=\"text/html; charset=utf-8\"'/>" +
-                "<link rel='stylesheet' href='/css/bootstrap.min.css'/></head><body class='body'>" +
-                "<div class='container'><div class='navbar'><div class='navbar-inner'>" +
-                "<a class='brand' href='/'>Topics, Courses and Lessons </a><var/>" +
-                "<a class='brand' href='/topic/java101/course/java101.01'>" +
-                "/topic/java101/course/java101.01</a></div></div>" +
+                "<link rel='stylesheet' href='/css/bootstrap.min.css'/></head>" +
+                "<body class='body'><div class='container'><div class='navbar'><div class='navbar-inner'>" +
+                "<a class='brand' href='/'>Topics, Courses and Lessons </a><var/><var/>" +
+                "<a class='brand' href='/topic/java101/course'>/topic/java101/course</a></div></div>" +
                 "<table class='table'><tr><td></td></tr></table>" ;
-        String expectedBodyFrag2 = "<div class=''>" +
+        String expectedBodyFrag2 = "<table class='table'><tr><td><div class=''>" +
                 "<form id='editForm' action='/topic/java101/course/java101.01/update' method='post'>" +
                 "<input name='id' type='hidden' value='java101.01'/>" +
-                "<label for='Name'>Name</label><input name='name' type='text' value='Java 101.01'/>" +
+                "<label for='Name'>Name</label>" +
+                "<input name='name' type='text' value='Java 101.01'/>" +
                 "<label for='Description'>Description</label>" +
                 "<input name='description' type='text' value='Java 101 Introductory course 01'/>" +
                 "<div class='form-actions'><input type='submit' value='Submit'/></div></form>" +
                 "</div>" ;
-        String expectedBodyFrag3 = "<div class=''><div>Maintain the lists of lessons.</div>" +
+        String expectedBodyFrag3 = "<div class=''>" +
+                "<div>Maintain the lists of lessons.</div>" +
                 "<a class='brand' href='/topic/java101/course/java101.01/lesson'>" +
                 "See Lessons for Course java101.01</a><div>&nbsp;</div>" +
                 "<div>Remove Course Java 101.01: Java 101 Introductory course 01 " +
                 "(only if all lessons removed first)</div>" +
                 "<a class='brand' href='/topic/java101/course/java101.01/delete'>" +
-                "Delete Course Java 101.01: Java 101 Introductory course 01</a></div></td></tr></table>" +
+                "Delete Course Java 101.01: Java 101 Introductory course 01</a>" +
+                "</div></td></tr></table>" +
                 "<table class='table'><tr><td></td></tr></table></div></body></html>";
         String actualBody = entity.getBody();
         assertThat(actualBody).contains(expectedBodyFrag1);
@@ -225,28 +226,30 @@ public class CourseApiApplicationTest {
                 TEST_HOST + "/topic/java101/course/java101.01/lesson/java101.01.01", String.class);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         String expectedBodyFrag1 = "<!DOCTYPE html><html><head>" +
-                "<title>Topics, Courses, Lessons -  [, topic, java101, course, java101.01, lesson, java101.01.01]</title>" +
+                "<title>Topics, Courses, Lessons -  " +
+                "[, topic, java101, course, java101.01, lesson, java101.01.01]</title>" +
                 "<meta http-equiv='\"Content-Type\" content=\"text/html; charset=utf-8\"'/>" +
-                "<link rel='stylesheet' href='/css/bootstrap.min.css'/></head><body class='body'>" +
-                "<div class='container'><div class='navbar'><div class='navbar-inner'>" +
-                "<a class='brand' href='/'>Topics, Courses and Lessons </a><var/>" +
-                "<a class='brand' href='/topic/java101/course/java101.01/lesson/java101.01.01'>" +
-                "/topic/java101/course/java101.01/lesson/java101.01.01</a></div></div>" +
+                "<link rel='stylesheet' href='/css/bootstrap.min.css'/></head>" +
+                "<body class='body'><div class='container'><div class='navbar'><div class='navbar-inner'>" +
+                "<a class='brand' href='/'>Topics, Courses and Lessons </a><var/><var/>" +
+                "<a class='brand' href='/topic/java101/course/java101.01/lesson'>" +
+                "/topic/java101/course/java101.01/lesson</a></div></div>" +
                 "<table class='table'><tr><td></td></tr></table>" ;
         String expectedBodyFrag2 = "<table class='table'><tr><td><div class=''>" +
-                "<form id='editForm' action='/topic/java101/course/java101.01/lesson/java101.01.01/update' method='post'>" +
+                "<form id='editForm' action='/topic/java101/course/java101.01/lesson/java101.01.01/update' " +
+                "method='post'>" +
                 "<input name='id' type='hidden' value='java101.01.01'/>" +
                 "<label for='Name'>Name</label>" +
                 "<input name='name' type='text' value='Java 101.01.01'/>" +
                 "<label for='Description'>Description</label>" +
                 "<input name='description' type='text' value='Java 101.01.01 Lesson 01'/>" +
-                "<div class='form-actions'><input type='submit' value='Submit'/></div></form>" +
-                "</div>" ;
+                "<div class='form-actions'>" +
+                "<input type='submit' value='Submit'/></div></form></div>" ;
         String expectedBodyFrag3 = "<div class=''><div>&nbsp;</div>" +
                 "<div>Remove Lesson Java 101.01.01: Java 101.01.01 Lesson 01</div>" +
                 "<a class='brand' href='/topic/java101/course/java101.01/lesson/java101.01.01/delete'>" +
-                "Delete Lesson Java 101.01.01: Java 101.01.01 Lesson 01</a></div></td></tr></table>" +
-                "<table class='table'><tr><td></td></tr></table></div></body></html>";
+                "Delete Lesson Java 101.01.01: Java 101.01.01 Lesson 01</a>" +
+                "</div></td></tr></table><table class='table'><tr><td></td></tr></table></div></body></html>";
         String actualBody = entity.getBody();
         assertThat(actualBody).contains(expectedBodyFrag1);
         assertThat(actualBody).contains(expectedBodyFrag2);
